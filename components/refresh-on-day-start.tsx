@@ -11,8 +11,9 @@ function RefreshOnDayStart() {
         const tomorrow = new Date(
             now.getFullYear(),
             now.getMonth(),
-            now.getDate() + 1,
-            0, 0, 6
+            now.getDate(),
+            now.getHours() + 1,
+            0, 2
         )
         
         const diffInMill = tomorrow.getTime() - now.getTime()

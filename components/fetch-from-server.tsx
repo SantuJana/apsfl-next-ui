@@ -90,7 +90,7 @@ function FetchFromServer({ source }: { source: Source }) {
             now.getFullYear(),
             now.getMonth(),
             now.getDate() - dayObj[day],
-            0, 0, 0, 1
+            0, 0, 0, 0
         );
 
         // end of today
@@ -98,7 +98,7 @@ function FetchFromServer({ source }: { source: Source }) {
             now.getFullYear(),
             now.getMonth(),
             now.getDate() - dayObj[day],
-            24, 0, 0, 0
+            23, 59, 59, 999
         );
 
         for (

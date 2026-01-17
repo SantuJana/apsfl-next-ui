@@ -1,4 +1,5 @@
 import { refreshLog } from '@/actions/log'
+import RefreshButton from '@/components/refresh-btn'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { getLogs } from '@/lib/dal'
@@ -20,12 +21,7 @@ async function Log() {
   return (
     <div>
       <div className='flex justify-end mb-1'>
-        <Form action={refreshLog}>
-          <Button className='z-10 bg-sky-600 hover:bg-sky-500'>
-            <RefreshCcw />
-            Refresh
-          </Button>
-        </Form>
+        <RefreshButton />
       </div>
       <div className='border rounded-md overflow-hidden'>
         <Table>

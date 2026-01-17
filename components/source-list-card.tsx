@@ -9,25 +9,27 @@ import { deleteSource } from '@/actions/source'
 import { Source } from '@/lib/dal'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import SourceActions from './source-actions'
 
 function SourceListCard({ source }: { source: Source }) {
     const pathname = usePathname();
 
-    const selected = useMemo(() => pathname.split('/').reverse()[0] === source.id, [pathname])
+    const selected = useMemo(() => pathname === `/${source.id}`, [pathname])
+    // const selected = useMemo(() => pathname.split('/').reverse()[0] === source.id, [pathname])
 
 
   return (
     <Link href={`/${source.id}`} onClick={(e) => selected && e.preventDefault()}>
-        <Card className={`p-2 cursor-pointer ${selected ? 'cursor-not-allowed bg-sky-100' : ''}`}>
+        <Card className={`p-2 cursor-pointer ${selected ? 'cursor-not-allowed bg-sky-100' : !source.enabled ? 'bg-red-100' : ''}`}>
             <CardContent className='p-2'>
                 <div className='h-20cursor-pointer'>
-                    <div className='flex gap-2 justify-between'>
+                    <div className='flex gap-2 justify-between items-baseline'>
                         <h3 className='text-sm font-medium capitalize'>{source.name}</h3>
-                        <Form action={deleteSource.bind(null, source.id)}>
-                            <Button variant={'outline'} size={'icon-sm'} className='cursor-pointer' disabled={selected} onClick={(e) => e.stopPropagation()}>
-                                <Trash2 className='h-4 w-4 shrink-0' />
-                            </Button>
-                        </Form>
+                        {
+                            !selected && (
+                                <SourceActions source={source} />
+                            )
+                        }
                     </div>
                     <p className='text-xs'>{source.host}</p>
                     <p className='text-xs'>

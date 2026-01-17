@@ -28,6 +28,15 @@ export type Log = {
     date_time: Date;
 }
 
+export type CameraWiseCount = {
+    channelid: number;
+    channelname: string;
+    event_count: number;
+    servername: string;
+    serverid: number;
+    servertype: string;
+}
+
 export const getSources = cache(async () => {
     // await new Promise(resolve => setTimeout(resolve, 2000))
     try {
@@ -54,10 +63,10 @@ export const getSourceById = cache(async (id: string) => {
     }
 })
 
-export const getEventCounts = cache(async (host: string, date: string, type: 'itms' | 'ivms') => {
+export const getEventCounts = cache(async (host: string, dateEpoch: number, type: 'itms' | 'ivms') => {
     // await new Promise(res => setTimeout(res, 4000))
     try {
-        const response = await fetch(`${API_URL}/event/${host}/${date}/${type}`)
+        const response = await fetch(`${API_URL}/event/${host}/${dateEpoch}/${type}`)
 
         if (!response.ok) return null
 
@@ -80,13 +89,24 @@ export const getHourEventCount = cache(async (host: string, date: string, hour: 
 })
 
 export const getLogs = cache(async () => {
-    console.log(API_URL)
     try {
         const response = await fetch(`${API_URL}/log`)
 
         if (!response.ok) return null
 
         return await response.json() as Log[]
+    } catch (error) {
+        return null
+    }
+})
+
+export const getCameraWiseCount = cache(async (sourceId: string, dateEpoch: number) => {
+    try {
+        const response = await fetch(`${API_URL}/event/${sourceId}/${dateEpoch}`)
+
+        if (!response.ok) return null
+
+        return await response.json() as CameraWiseCount[]
     } catch (error) {
         return null
     }
