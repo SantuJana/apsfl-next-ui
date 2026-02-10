@@ -20,7 +20,7 @@ function CountsTable({ type, host, day, sourceId }: { type: 'itms'|'ivms', host:
   const fetchCounts = async (sourceId: string, host: string, dayStartEpoch: number, type: string) => {
     setIsPending(true)
     try {
-      const response = await fetch(`/${sourceId}/api?host=${host}&dayStartEpoch=${dayStartEpoch}&type=${type}`)
+      const response = await fetch(`/${sourceId}/api?dayStartEpoch=${dayStartEpoch}&type=${type}`)
 
       if (!response.ok) return null
 
@@ -55,14 +55,14 @@ function CountsTable({ type, host, day, sourceId }: { type: 'itms'|'ivms', host:
     ).getTime()
     const time_range = `${now.getHours().toString().padStart(2, '0')}:00-${now.getHours().toString().padStart(2, '0')}:59`
 
-    const response = await fetch(`/event/api/hourly/${host}/${hourStartEpoch}/${type}`)
+    const response = await fetch(`/event/api/hourly/${sourceId}/${hourStartEpoch}/${type}`)
     if (response.ok) {
       const data: EventCount = await response.json()
       if (!data) return
       
       setCountState(prevState => prevState?.map((count: EventCount) => count.time_range === time_range ? {...count, event_count: data.event_count} : count) || null)
     }
-  }, [host, type])
+  }, [sourceId, type])
 
   useEffect(() => {
     if (isPending) return

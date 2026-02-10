@@ -37,6 +37,34 @@ export type CameraWiseCount = {
     servertype: string;
 }
 
+export type Cameras = {
+    uuid: string; 
+    channelid: number; 
+    channelip: string;
+    channelname: string; 
+    serverid: number;
+    servername: string;
+    avgrecfps: number;
+    avgrecbitrate: number;
+    dbchannelid: string;
+}
+
+export type CameraHourlyData = {
+    time_range: string; 
+    avgrecfps: number; 
+    avgrecbitrate: number;
+}
+
+export type Channel = {
+    id: string;
+    uuid: string;
+    serverid: string;
+    channelid: number;
+    channelname: string;
+    channelip: string;
+    channeltype: string;
+}
+
 export const getSources = cache(async () => {
     // await new Promise(resolve => setTimeout(resolve, 2000))
     try {
@@ -63,10 +91,10 @@ export const getSourceById = cache(async (id: string) => {
     }
 })
 
-export const getEventCounts = cache(async (host: string, dateEpoch: number, type: 'itms' | 'ivms') => {
+export const getEventCounts = cache(async (sourceId: string, dateEpoch: number, type: 'itms' | 'ivms') => {
     // await new Promise(res => setTimeout(res, 4000))
     try {
-        const response = await fetch(`${API_URL}/event/${host}/${dateEpoch}/${type}`)
+        const response = await fetch(`${API_URL}/event/${sourceId}/${dateEpoch}/${type}`)
 
         if (!response.ok) return null
 
@@ -107,6 +135,42 @@ export const getCameraWiseCount = cache(async (sourceId: string, dateEpoch: numb
         if (!response.ok) return null
 
         return await response.json() as CameraWiseCount[]
+    } catch (error) {
+        return null
+    }
+})
+
+export const getCameras = cache(async (sourceId: string, serverType: 'itms'|'ivms', dateEpoch: number) => {
+    try {
+        const response = await fetch(`${API_URL}/channel/${sourceId}/${serverType}/${dateEpoch}`)
+
+        if (!response.ok) return null
+
+        return await response.json() as CameraWiseCount[]
+    } catch (error) {
+        return null
+    }
+})
+
+export const getCameraHourlyData = cache(async (channelId: string, dateEpoch: number) => {
+    try {
+        const response = await fetch(`${API_URL}/channel/hourly/${channelId}/${dateEpoch}`)
+
+        if (!response.ok) return null
+
+        return await response.json() as CameraHourlyData[]
+    } catch (error) {
+        return null
+    }
+})
+
+export const getChannelById = cache(async (id: string) => {
+    try {
+        const response = await fetch(`${API_URL}/channel/${id}`)
+        
+        if (!response.ok) return null
+
+        return await response.json() as Channel
     } catch (error) {
         return null
     }

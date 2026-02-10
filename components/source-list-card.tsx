@@ -1,25 +1,24 @@
 'use client'
 
-import React, { useMemo } from 'react'
-import { Button } from './ui/button'
+import React, { useCallback, useMemo } from 'react'
 import { Card, CardContent } from './ui/card'
-import { Trash2 } from 'lucide-react'
-import Form from 'next/form'
-import { deleteSource } from '@/actions/source'
 import { Source } from '@/lib/dal'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import SourceActions from './source-actions'
 
 function SourceListCard({ source }: { source: Source }) {
-    const pathname = usePathname();
+    const pathname = usePathname()
+    const router = useRouter()
 
     const selected = useMemo(() => pathname === `/${source.id}`, [pathname])
-    // const selected = useMemo(() => pathname.split('/').reverse()[0] === source.id, [pathname])
 
+    const handleRedirect = useCallback((e: React.MouseEvent<HTMLSpanElement, MouseEvent>, type: 'itms'|'ivms') => {
+        e.stopPropagation()
+        router.push(`/${source.id}/${type}`)
+    }, [source.id])
 
   return (
-    <Link href={`/${source.id}`} onClick={(e) => selected && e.preventDefault()}>
+    <div onClick={(e) => selected ? e.preventDefault() : router.push(`/${source.id}`)}>
         <Card className={`p-2 cursor-pointer ${selected ? 'cursor-not-allowed bg-sky-100' : !source.enabled ? 'bg-red-100' : ''}`}>
             <CardContent className='p-2'>
                 <div className='h-20cursor-pointer'>
@@ -35,7 +34,7 @@ function SourceListCard({ source }: { source: Source }) {
                     <p className='text-xs'>
                         {
                             !!source.itms && (
-                                'ITMS'
+                                <span className='hover:text-sky-600 hover:underline underline-offset-2 hover:cursor-pointer' onClick={(e) => handleRedirect(e, 'itms')}>ITMS</span>
                             )
                         }
                         {
@@ -43,7 +42,7 @@ function SourceListCard({ source }: { source: Source }) {
                         }
                         {
                             !!source.ivms && (
-                                'IVMS'
+                                <span className='hover:text-sky-600 hover:underline underline-offset-2 hover:cursor-pointer' onClick={(e) => handleRedirect(e, 'ivms')}>IVMS</span>
                             )
                         }
                         {
@@ -53,7 +52,7 @@ function SourceListCard({ source }: { source: Source }) {
                 </div>
             </CardContent>
         </Card>
-    </Link>
+    </div>
   )
 }
 

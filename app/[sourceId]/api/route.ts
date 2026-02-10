@@ -1,13 +1,13 @@
 import { getEventCounts } from "@/lib/dal";
 import { NextRequest } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{sourceId: string}> }) {
     const searchParams = await req.nextUrl.searchParams
-    const host = searchParams.get('host') || ''
+    const { sourceId } = await params
     const dayStartEpoch = Number(searchParams.get('dayStartEpoch')) || Number(0)
     const type = (searchParams.get('type') || 'itms') as 'itms'|'ivms'
 
-    const data = await getEventCounts(host, dayStartEpoch, type)
+    const data = await getEventCounts(sourceId, dayStartEpoch, type)
 
     return Response.json(data)
 }
